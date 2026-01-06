@@ -22,11 +22,16 @@ class UploadServices():
                 detail=f"Invalid file type, only jpeg, png, jpg, webp"
             )
 
+        #set max size to 2mb
         max_bytes = 2 * 1024 * 1024
 
+        #change the "cursor" position to the end of the file
         file.file.seek(0, 2)
+
+        #get the file size
         file_size = file.file.tell()
 
+        #change the "cursor" position to the beginning of the file, so that cloudinary can read the full file
         file.file.seek(0)
 
         if file_size > max_bytes:
@@ -39,6 +44,8 @@ class UploadServices():
         
         self.validate_file(file)
         try:
+
+            #run it on a separate thread to prevent blocking
             response = await asyncio.to_thread(upload,
                 file=file.file,
                 folder="test"
